@@ -25,6 +25,7 @@ int sleep(int);
 int uptime(void);
 int getHelloWorld(void);
 int getTicks(void);
+int getProcInfo(void);
 
 
 // ulib.c

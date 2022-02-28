@@ -183,6 +183,7 @@ UPROGS=\
 	_zombie\
 	_sysTest\
 	_getTicksTest\
+	_getProcInfoTest\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -258,6 +259,7 @@ EXTRA=\
 	.gdbinit.tmpl gdbutil\
 	sysTest.c\
 	getTicksTest.c\
+	getProcInfoTest.c\
 
 dist:
 	rm -rf dist

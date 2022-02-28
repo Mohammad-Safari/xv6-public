@@ -101,3 +101,9 @@ sys_getTicks(void)
 {
   return ticks;
 }
+
+int
+sys_getProcInfo(void)
+{
+  return getProcInfo();
+}
