@@ -95,3 +95,9 @@ sys_getHelloWorld(void)
 {
   return getHelloWorld();
 }
+
+int
+sys_getTicks(void)
+{
+  return ticks;
+}

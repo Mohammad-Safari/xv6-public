@@ -182,6 +182,7 @@ UPROGS=\
 	_wc\
 	_zombie\
 	_sysTest\
+	_getTicksTest\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -256,6 +257,7 @@ EXTRA=\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 	sysTest.c\
+	getTicksTest.c\
 
 dist:
 	rm -rf dist
