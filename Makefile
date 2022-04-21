@@ -184,6 +184,7 @@ UPROGS=\
 	_sysTest\
 	_getTicksTest\
 	_getProcInfoTest\
+	_thread_api\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -260,6 +261,7 @@ EXTRA=\
 	sysTest.c\
 	getTicksTest.c\
 	getProcInfoTest.c\
+	thread_api.c\
 
 dist:
 	rm -rf dist
