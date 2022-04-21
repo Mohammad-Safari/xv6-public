@@ -107,3 +107,24 @@ sys_getProcInfo(void)
 {
   return getProcInfo();
 }
+
+int 
+sys_thread_create(void)
+{
+  // implement thread_create
+  return 0;
+}
+
+int 
+sys_thread_id(void)
+{
+  // implement thread_id
+  return 0;
+}
+
+int 
+sys_thread_join(void)
+{
+  // implement thread_join
+  return 0;
+}

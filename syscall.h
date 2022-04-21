@@ -23,3 +23,6 @@
 #define SYS_getHelloWorld  22
 #define SYS_getTicks       23
 #define SYS_getProcInfo    24
+#define SYS_thread_create  25
+#define SYS_thread_id      26
+#define SYS_thread_join    27

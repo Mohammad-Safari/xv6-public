@@ -32,3 +32,6 @@ SYSCALL(uptime)
 SYSCALL(getHelloWorld);
 SYSCALL(getTicks);
 SYSCALL(getProcInfo);
+SYSCALL(thread_create);
+SYSCALL(thread_id);    
+SYSCALL(thread_join);  

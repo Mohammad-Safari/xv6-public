@@ -26,7 +26,9 @@ int uptime(void);
 int getHelloWorld(void);
 int getTicks(void);
 int getProcInfo(void);
-
+int thread_create(void*);
+int thread_id(void);
+int thread_join(int);
 
 // ulib.c
 int stat(const char*, struct stat*);
