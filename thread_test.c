@@ -26,19 +26,43 @@
 
 // TEST 2:
 // simple run "whitout exit" test by arg
+// void print(void *args)
+// {
+//     printf(1, "hello from thread-%d\n", *(int *)args);
+//     while (1)
+//         ;
+//     return;
+// }
+// int main()
+// {
+//     int i = 0;
+//     while (1)
+//     {
+//         thread_creator(print, (void *)&i);
+//         sleep(100);
+//         i++;
+//     }
+// }
+
+// TEST 3:
+// simple run "whitout exit" test with 
+// address space checked being shared
+// in both main thread and child thread
+int i = 0;
 void print(void *args)
 {
-    printf(1, "hello from thread-%d\n", *(int *)args);
     while (1)
-        ;
+    {
+        printf(1, "hello from thread, var i is now %d in main thread\n", *(int *)args);
+        sleep(100);
+    }
     return;
 }
 int main()
 {
-    int i = 0;
+    thread_creator(print, (void *)&i);
     while (1)
     {
-        thread_creator(print, (void *)&i);
         sleep(100);
         i++;
     }
