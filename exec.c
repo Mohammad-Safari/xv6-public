@@ -98,6 +98,8 @@ exec(char *path, char **argv)
   curproc->pgdir = pgdir;
   curproc->sz = sz;
   curproc->tf->eip = elf.entry;  // main
+  // keep a copy of the stack pointer
+  curproc->thread_stack = (void *)sp;
   curproc->tf->esp = sp;
   switchuvm(curproc);
   freevm(oldpgdir);

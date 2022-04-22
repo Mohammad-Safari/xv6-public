@@ -571,17 +571,17 @@ nodup_fork(void *stack)
     return -1;
   }
 
-  // Copy process state from proc.
-  if ((np->pgdir = copyuvm(curproc->pgdir, curproc->sz)) == 0)
-  {
-    kfree(np->kstack);
-    np->kstack = 0;
-    np->state = UNUSED;
-    return -1;
-  }
+  // use same process state from proc.
+  np->pgdir = curproc->pgdir;
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
+
+  np->main_thread = 0;
+  np->thread_stack = stack;  
+  uint stack_data_size = (uint)curproc->thread_stack - curproc->tf->esp; // parent stack data size
+  np->tf->esp = (uint)np->thread_stack - stack_data_size;  // reserve enogh stack space for thread
+  memmove((void *)np->tf->esp, (void *)curproc->tf->esp, stack_data_size); // copy data into reserved 
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
