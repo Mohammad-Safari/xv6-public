@@ -1,4 +1,5 @@
 #include "stddef.h"
+#include "mmu.h"
 #include "types.h"
 #include "stat.h"
 #include "user.h"
@@ -8,11 +9,12 @@ typedef struct
     void *aligned_addr;
 } aligned_memory;
 aligned_memory *allocate_aligned(size_t size, size_t align);
+aligned_memory *default_allocate_aligned(size_t size)
 int thread_creator(void (*fn)(void *), void *arg);
 
 int thread_creator(void (*fn)(void *), void *arg)
 {
-    aligned_memory *memptr = (aligned_memory *)allocate_aligned(4096, 4096);
+    aligned_memory *memptr = (aligned_memory *)default_allocate_aligned(4096);
     void *stack = memptr->aligned_addr;
     int tid = thread_create(stack);
     if (tid < 0)
@@ -44,5 +46,20 @@ aligned_memory *allocate_aligned(size_t size, size_t align)
     memptr->aligned_addr = (void *)((((uint)(memptr + 1)) + mask) & ~mask);
     // e.g. allocated address:0x09 => (0x09 + 0b011) & 0b11100 =
     // 0b10010 & 0b11100 = 0b1000 => aligned address:0x10
+    return memptr;
+}
+
+aligned_memory *default_allocate_aligned(size_t size)
+{
+    if (!size)
+        return NULL;
+    // allocate memory for the size + align
+    aligned_memory *memptr = (aligned_memory *)malloc(sizeof(aligned_memory) + size + PGSIZE);
+    // allocation failure
+    if (!memptr)
+        return NULL;
+    // round to upper aligned memory address
+    memptr->aligned_addr = (void *)(PGROUNDUP((uint)(memptr + 1)));
+
     return memptr;
 }
