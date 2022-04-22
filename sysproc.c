@@ -111,8 +111,12 @@ sys_getProcInfo(void)
 int 
 sys_thread_create(void)
 {
-  // implement thread_create
-  return 0;
+  int stack;
+
+  if(argint(0, &stack) < 0)
+    return -1;
+    
+  return nodup_fork((void*)stack);
 }
 
 int 

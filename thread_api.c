@@ -1,15 +1,15 @@
 #include "stddef.h"
-#include "mmu.h"
 #include "types.h"
 #include "stat.h"
 #include "user.h"
+#include "mmu.h"
 
 typedef struct
 {
     void *aligned_addr;
 } aligned_memory;
 aligned_memory *allocate_aligned(size_t size, size_t align);
-aligned_memory *default_allocate_aligned(size_t size)
+aligned_memory *default_allocate_aligned(size_t size);
 int thread_creator(void (*fn)(void *), void *arg);
 
 int thread_creator(void (*fn)(void *), void *arg)
@@ -59,7 +59,7 @@ aligned_memory *default_allocate_aligned(size_t size)
     if (!memptr)
         return NULL;
     // round to upper aligned memory address
-    memptr->aligned_addr = (void *)(PGROUNDUP((uint)(memptr + 1)));
+    memptr->aligned_addr = (void *)(PGROUNDUP((uint)(memptr) + 1));
 
     return memptr;
 }
