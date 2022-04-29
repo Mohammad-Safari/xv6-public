@@ -43,7 +43,7 @@ aligned_memory *allocate_aligned(size_t size, size_t align)
     if (!memptr)
         return NULL;
     // calculate the aligned memory address
-    memptr->aligned_addr = (void *)((((uint)(memptr + 1)) + mask) & ~mask);
+    memptr->aligned_addr = (void *)((((uint)(memptr + sizeof(aligned_memory))) + mask) & ~mask);
     // e.g. allocated address:0x09 => (0x09 + 0b011) & 0b11100 =
     // 0b10010 & 0b11100 = 0b1000 => aligned address:0x10
     return memptr;
@@ -59,7 +59,6 @@ aligned_memory *default_allocate_aligned(size_t size)
     if (!memptr)
         return NULL;
     // round to upper aligned memory address
-    memptr->aligned_addr = (void *)(PGROUNDUP((uint)(memptr) + 1));
-
+    memptr->aligned_addr = (void *)(PGROUNDUP((uint)(memptr + sizeof(aligned_memory))));
     return memptr;
 }

@@ -89,6 +89,7 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   p->initTick = ticks;
+  p->main_thread = 1;
 
   release(&ptable.lock);
 
@@ -577,11 +578,13 @@ nodup_fork(void *stack)
   np->parent = curproc;
   *np->tf = *curproc->tf;
 
-  np->main_thread = 0;
-  np->thread_stack = stack;  
-  uint stack_data_size = (uint)curproc->thread_stack - curproc->tf->esp; // parent stack data size
-  np->tf->esp = (uint)np->thread_stack - stack_data_size;  // reserve enogh stack space for thread
-  memmove((void *)np->tf->esp, (void *)curproc->tf->esp, stack_data_size); // copy data into reserved 
+  np->main_thread = 0;                                                     // remove mark main thread flag
+  np->thread_stack = (void *)((uint)stack + PGSIZE);                       // save pointer to top of stack space address
+  uint stack_data_size = (uint)curproc->thread_stack - curproc->tf->esp;   // parent stack data size
+  np->tf->esp = (uint)np->thread_stack - stack_data_size;                  // reserve enough stack space for new thread
+  memmove((void *)np->tf->esp, (void *)curproc->tf->esp, stack_data_size); // copy data into reserved space
+  void *base_pointer_offset = curproc->thread_stack - curproc->tf->ebp;    // base pointer offset in parent thread
+  np->tf->ebp = np->thread_stack - base_pointer_offset;                    // point base pointer to new return address
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
