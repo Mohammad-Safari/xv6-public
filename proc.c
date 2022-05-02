@@ -256,10 +256,19 @@ exit(void)
 
   // Pass abandoned children to init.
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->parent == curproc){
-      p->parent = initproc;
-      if(p->state == ZOMBIE)
-        wakeup1(initproc);
+    if(p->parent == curproc){ // if not child process but thread
+      if(p->main_thread==0)
+      {
+        p->state = UNUSED;
+        kfree(p->kstack);
+        p->kstack = 0;
+      }
+      else
+      {
+        p->parent = initproc;
+        if(p->state == ZOMBIE)
+          wakeup1(initproc);
+      }
     }
   }
 

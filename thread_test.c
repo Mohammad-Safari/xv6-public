@@ -4,9 +4,9 @@
 #include "thread_api.c"
 
 // TEST 1:
-// simple run "whitout exit" test
+// simple run "without exit" test
 // because exit is not still modified
-// for thread compatibilty and result
+// for thread compatibility and result
 // in kernel panic
 // void print(void *args)
 // {
@@ -25,7 +25,7 @@
 // }
 
 // TEST 2:
-// simple run "whitout exit" test by arg
+// simple run "without exit" test by arg
 // void print(void *args)
 // {
 //     printf(1, "hello from thread-%d\n", *(int *)args);
@@ -45,25 +45,51 @@
 // }
 
 // TEST 3:
-// simple run "whitout exit" test with 
+// simple run "without exit" test with
 // address space checked being shared
 // in both main thread and child thread
-int i = 0;
+// int i = 0;
+// void print(void *args)
+// {
+//     while (1)
+//     {
+//         printf(1, "hello from thread, var i is now %d in main thread\n", *(int *)args);
+//         sleep(100);
+//     }
+//     return;
+// }
+// int main()
+// {
+//     thread_creator(print, (void *)&i);
+//     while (1)
+//     {
+//         sleep(100);
+//         i++;
+//     }
+// }
+
+// TEST 4:
+// simple run "with exit" test with
+// with 2 hierarchy threads by sleep
+// in both main thread and child thread
+void print2(void *args)
+{
+    printf(1, "thread is created - tid %d\n", thread_id());
+    return;
+}
 void print(void *args)
 {
-    while (1)
-    {
-        printf(1, "hello from thread, var i is now %d in main thread\n", *(int *)args);
-        sleep(100);
-    }
+    printf(1, "thread is created - tid %d\n", thread_id());
+    thread_creator(print2, (void *)NULL);
+    sleep(500);
     return;
 }
 int main()
 {
-    thread_creator(print, (void *)&i);
-    while (1)
-    {
-        sleep(100);
-        i++;
-    }
+    printf(1, "main thread is goting to create other threads\n");
+    thread_creator(print, (void *)NULL);
+    sleep(100);
+    thread_creator(print, (void *)NULL);
+    sleep(700);
+    exit();
 }
