@@ -559,7 +559,7 @@ getProcInfo(void)
 }
 
 int
-nodup_fork(void *stack)
+thread_fork(void *stack)
 {
 
   int i, pid;

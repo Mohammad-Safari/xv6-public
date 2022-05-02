@@ -116,14 +116,13 @@ sys_thread_create(void)
   if(argint(0, &stack) < 0)
     return -1;
     
-  return nodup_fork((void*)stack);
+  return thread_fork((void*)stack);
 }
 
 int 
 sys_thread_id(void)
 {
-  // implement thread_id
-  return 0;
+  return myproc()->pid;
 }
 
 int 
