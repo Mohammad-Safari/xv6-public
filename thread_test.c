@@ -88,8 +88,8 @@ int main()
 {
     printf(1, "main thread is goting to create other threads\n");
     thread_creator(print, (void *)NULL);
-    sleep(100);
+    // sleep(100);
     thread_creator(print, (void *)NULL);
-    sleep(700);
+    // sleep(700);
     exit();
 }

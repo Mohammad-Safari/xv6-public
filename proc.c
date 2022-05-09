@@ -259,9 +259,12 @@ exit(void)
     if(p->parent == curproc){ // if not child process but thread
       if(p->main_thread==0)
       {
-        p->state = UNUSED;
-        kfree(p->kstack);
-        p->kstack = 0;
+        /** pass to wait to clean **/
+        // p->state = ZOMBIE;
+        /** manually kill **/
+        p->killed = 1;
+        if(p->state == SLEEPING)
+        p->state = RUNNABLE;
       }
       else
       {
@@ -300,7 +303,21 @@ wait(void)
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
+        /** for when multiple threads with same pgdir are running **/
+        /** second and preferred way is not to iterate over table **/
+        int flag = 0;
+        for (struct proc *p2 = ptable.proc; p2 < &ptable.proc[NPROC]; p2++)
+        {
+          if (p2->pgdir == p->pgdir)
+          {
+            flag = 1;
+            break;
+          }
+        }
+        if (!flag)
+        {
         freevm(p->pgdir);
+        }
         p->pid = 0;
         p->parent = 0;
         p->name[0] = 0;
