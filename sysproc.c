@@ -128,6 +128,10 @@ sys_thread_id(void)
 int 
 sys_thread_join(void)
 {
-  // implement thread_join
-  return 0;
+  int tid;
+
+  if(argint(0, &tid) < 0)
+    return -1;
+
+  return thread_join(tid);
 }

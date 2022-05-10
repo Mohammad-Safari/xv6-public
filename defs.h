@@ -123,6 +123,7 @@ void            yield(void);
 int             getHelloWorld(void);
 int             getProcInfo(void);
 int             thread_fork(void*);
+int             thread_join(int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

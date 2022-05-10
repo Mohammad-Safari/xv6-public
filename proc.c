@@ -256,8 +256,8 @@ exit(void)
 
   // Pass abandoned children to init.
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->parent == curproc){ // if not child process but thread
-      if(p->main_thread==0)
+    if(p->parent == curproc){ // if not child process but thread, brutally kill them all
+      if(p->main_thread != 1)
       {
         /** pass to wait to clean **/
         // p->state = ZOMBIE;
@@ -628,7 +628,65 @@ thread_fork(void *stack)
 
   np->state = RUNNABLE;
 
+  curproc->child_threads++;
+
   release(&ptable.lock);
 
   return pid;
+}
+
+int
+thread_join(int tid)
+{
+
+  struct proc *p;
+  int havekids, pid;
+  struct proc *curproc = myproc();
+
+  if(curproc->child_threads == 0)
+  {
+    return -1;
+  }
+
+  acquire(&ptable.lock);
+  for (;;)
+  {
+    // Scan through table looking for exited children.
+    havekids = 0;
+    for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+    {
+      if (p->pid != tid || p->main_thread == 1 || p->parent != curproc)
+        continue;
+
+      havekids = 1;
+      if (p->state == ZOMBIE)
+      {
+        // Found one.
+        pid = p->pid;
+        kfree(p->kstack);
+        p->kstack = 0;
+        /** shared pgdir must not be freed **/
+        // freevm(p->pgdir);
+        p->pid = 0;
+        p->parent = 0;
+        p->name[0] = 0;
+        p->killed = 0;
+        p->state = UNUSED;
+        p->child_threads = 0;
+        release(&ptable.lock);
+        curproc->child_threads--;
+        return pid;
+      }
+    }
+
+    // No point waiting if we don't have any children.
+    if (!havekids || curproc->killed)
+    {
+      release(&ptable.lock);
+      return -1;
+    }
+
+    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+    sleep(curproc, &ptable.lock); // DOC: wait-sleep
+  }
 }

@@ -51,6 +51,7 @@ struct proc {
   char name[16];               // Process name (debugging)
   int initTick;                // Process init tick
   int main_thread;             // If non-zero, this is the main thread
+  int child_threads;           // child threads count
   void *thread_stack;          // keeps stack thread
 };
 
