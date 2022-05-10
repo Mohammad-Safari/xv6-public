@@ -68,28 +68,57 @@
 //     }
 // }
 
-// TEST 4:
-// simple run "with exit" test with
+// // TEST 4:
+// // simple run "with exit" test with
+// // with 2 hierarchy threads by sleep
+// // in both main thread and child thread
+// void print2(void *args)
+// {
+//     printf(1, "thread is created - tid %d\n", thread_id());
+//     return;
+// }
+// void print(void *args)
+// {
+//     printf(1, "thread is created - tid %d\n", thread_id());
+//     thread_creator(print2, (void *)NULL);
+//     sleep(500);
+//     return;
+// }
+// int main()
+// {
+//     printf(1, "main thread is goting to create other threads\n");
+//     thread_creator(print, (void *)NULL);
+//     // sleep(100);
+//     thread_creator(print, (void *)NULL);
+//     // sleep(700);
+//     exit();
+// }
+
+// TEST 5:
+// simple run "with join" test with
 // with 2 hierarchy threads by sleep
 // in both main thread and child thread
 void print2(void *args)
 {
-    printf(1, "thread is created - tid %d\n", thread_id());
+    printf(1, "thread is created in print2 - tid %d\n", thread_id());
     return;
 }
 void print(void *args)
 {
     printf(1, "thread is created - tid %d\n", thread_id());
-    thread_creator(print2, (void *)NULL);
-    sleep(500);
+    int tid = thread_creator(print2, (void *)NULL);
+    printf(1, "tid exited %d\n", thread_join(tid));
+    // sleep(500);
     return;
 }
 int main()
 {
     printf(1, "main thread is goting to create other threads\n");
-    thread_creator(print, (void *)NULL);
-    // sleep(100);
-    thread_creator(print, (void *)NULL);
-    // sleep(700);
+    int tid = thread_creator(print, (void *)NULL);
+    printf(1, "tid exited %d\n", thread_join(tid));
+    // sleep(500);
+    int tid2 = thread_creator(print, (void *)NULL);
+    printf(1, "tid exited %d\n", thread_join(tid2));
+    // sleep(500);
     exit();
 }
