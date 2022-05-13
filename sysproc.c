@@ -122,7 +122,10 @@ sys_thread_create(void)
 int 
 sys_thread_id(void)
 {
-  return myproc()->pid;
+  struct proc * curproc = myproc();
+  if(curproc->main_thread == 1)
+    return -1;
+  return curproc->pid;
 }
 
 int 
