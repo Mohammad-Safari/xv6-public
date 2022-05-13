@@ -98,27 +98,96 @@
 // simple run "with join" test with
 // with 2 hierarchy threads by sleep
 // in both main thread and child thread
-void print2(void *args)
+// void print2(void *args)
+// {
+//     printf(1, "thread is created in print2 - tid %d\n", thread_id());
+//     return;
+// }
+// void print(void *args)
+// {
+//     printf(1, "thread is created - tid %d\n", thread_id());
+//     int tid = thread_creator(print2, (void *)NULL);
+//     printf(1, "tid exited %d\n", thread_join(tid));
+//     // sleep(500);
+//     return;
+// }
+// int main()
+// {
+//     printf(1, "main thread is goting to create other threads\n");
+//     int tid = thread_creator(print, (void *)NULL);
+//     printf(1, "tid exited %d\n", thread_join(tid));
+//     // sleep(500);
+//     int tid2 = thread_creator(print, (void *)NULL);
+//     printf(1, "tid exited %d\n", thread_join(tid2));
+//     // sleep(500);
+//     exit();
+// }
+
+// Final Problem
+#define LIMIT 10
+int base = 0;
+
+/** method 1 **/
+void add1(void *args)
 {
-    printf(1, "thread is created in print2 - tid %d\n", thread_id());
-    return;
+    int tid = -1;
+    base++;
+    printf(1, "[ID] %d => ", thread_id());
+    if (base < LIMIT)
+    {
+        printf(1, "[SUCCESS] 0\n");
+        tid = thread_creator(add1, (void *)NULL);
+        thread_join(tid);
+    }
+    else
+    {
+        printf(1, "[FAILED] -1\n");
+    }
+    exit();
 }
-void print(void *args)
+
+int main1()
 {
-    printf(1, "thread is created - tid %d\n", thread_id());
-    int tid = thread_creator(print2, (void *)NULL);
-    printf(1, "tid exited %d\n", thread_join(tid));
-    // sleep(500);
-    return;
+    printf(1, "BASE = %d, LIMIT = %d\n");
+
+    int tid = thread_creator(add1, (void *)NULL);
+    thread_join(tid);
+
+    exit();
 }
+
+/** method 2 **/
+void add2(void *args)
+{
+    base++;
+    exit();
+}
+
+int main2()
+{
+    printf(1, "BASE = %d, LIMIT = %d\n");
+    for (;;)
+    {
+        int tid = thread_creator(add2, (void *)NULL);
+        printf(1, "[ID] %d => ", tid);
+        thread_join(tid);
+        if (base < LIMIT)
+        {
+            printf(1, "[SUCCESS] 0\n");
+        }
+        else
+        {
+            printf(1, "[FAILED] -1\n");
+            break;
+        }
+    }
+
+    exit();
+}
+
+/** **/
 int main()
 {
-    printf(1, "main thread is goting to create other threads\n");
-    int tid = thread_creator(print, (void *)NULL);
-    printf(1, "tid exited %d\n", thread_join(tid));
-    // sleep(500);
-    int tid2 = thread_creator(print, (void *)NULL);
-    printf(1, "tid exited %d\n", thread_join(tid2));
-    // sleep(500);
-    exit();
+    main1();
+    // main2();
 }

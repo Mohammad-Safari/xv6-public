@@ -640,7 +640,7 @@ thread_join(int tid)
 {
 
   struct proc *p;
-  int havekids, pid;
+  int havekids/* , pid */;
   struct proc *curproc = myproc();
 
   if(curproc->child_threads == 0)
@@ -662,7 +662,7 @@ thread_join(int tid)
       if (p->state == ZOMBIE)
       {
         // Found one.
-        pid = p->pid;
+        // pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
         /** shared pgdir must not be freed **/
@@ -675,7 +675,7 @@ thread_join(int tid)
         p->child_threads = 0;
         release(&ptable.lock);
         curproc->child_threads--;
-        return pid;
+        return 0;
       }
     }
 
