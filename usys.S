@@ -35,3 +35,4 @@ SYSCALL(getProcInfo);
 SYSCALL(thread_create);
 SYSCALL(thread_id);    
 SYSCALL(thread_join);  
+SYSCALL(set_execution_priority);  

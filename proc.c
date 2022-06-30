@@ -693,3 +693,14 @@ thread_join(int tid)
     sleep(curproc, &ptable.lock); // DOC: wait-sleep
   }
 }
+
+int set_execution_priority(int priority) {
+  acquire(&ptable.lock);
+  if (priority < 1 || priority > 6)
+  {
+    priority = 5;
+  }
+  myproc()->execution_priority = priority;
+  release(&ptable.lock);
+  return priority;
+}

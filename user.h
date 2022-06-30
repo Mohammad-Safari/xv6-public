@@ -29,6 +29,8 @@ int getProcInfo(void);
 int thread_create(void*);
 int thread_id(void);
 int thread_join(int);
+int set_execution_priority(int);
+
 
 // ulib.c
 int stat(const char*, struct stat*);

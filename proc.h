@@ -34,6 +34,8 @@ struct context {
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
+enum scheduling { ROUND_ROBIN, PRIORITY, MLQ, LOTTERY };
+
 // Per-process state
 struct proc {
   uint sz;                     // Size of process memory (bytes)
@@ -53,6 +55,7 @@ struct proc {
   int main_thread;             // If non-zero, this is the main thread
   int child_threads;           // child threads count
   void *thread_stack;          // keeps stack thread
+  int execution_priority;        // process execution priority
 };
 
 // Process memory is laid out contiguously, low addresses first:

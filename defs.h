@@ -124,6 +124,7 @@ int             getHelloWorld(void);
 int             getProcInfo(void);
 int             thread_fork(void*);
 int             thread_join(int);
+int             set_execution_priority(int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

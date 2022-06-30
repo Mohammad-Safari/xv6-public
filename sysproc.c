@@ -138,3 +138,13 @@ sys_thread_join(void)
 
   return thread_join(tid);
 }
+
+int
+sys_set_execution_priority()
+{
+  int priority;
+  if (argint(0, &priority) < 0)
+    return -1;
+
+  return set_execution_priority(priority);
+}
