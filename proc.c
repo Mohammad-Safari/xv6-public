@@ -14,6 +14,8 @@ struct {
 
 static struct proc *initproc;
 
+enum schedpolicy scheduler_policy;
+
 int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
@@ -90,6 +92,7 @@ found:
   p->pid = nextpid++;
   p->initTick = ticks;
   p->main_thread = 1;
+  p->execution_priority = 3;
 
   release(&ptable.lock);
 
@@ -339,6 +342,13 @@ wait(void)
   }
 }
 
+struct proc * 
+ptable_iterate(struct proc *p)
+{
+  uint pn = (((uint)p + 1) % (uint)(&ptable.proc[NPROC]));
+  return (struct proc *)(pn + (uint)ptable.proc);
+}
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -360,9 +370,50 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
+    for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+    {
+      switch (scheduler_policy)
+      {
+      case DEFAULT:
+      case PRIORITY:
+      {
+
+        if (p->state != RUNNABLE)
+          continue;
+
+        // get the process with most priority in table
+        // actually start searching from p rather than ptable start
+        // so that we can round robin on the same priorities
+        struct proc *curr_priority = p;
+        for (struct proc *p1 = p + 1; p1 == p; p1 = ptable_iterate(p1))
+        {
+          if (p1->state != RUNNABLE)
+          {
+            continue;
+          }
+          else if (p1->execution_priority < curr_priority->execution_priority)
+          {
+            curr_priority = p1;
+          }
+        }
+        p = curr_priority; // we have selected the process with most priority
+        // also by changing iterator to next process
+        // we guarantee that processes same priority
+        // be served round robin in for loop
+        break;
+      }
+      case ROUND_ROBIN:
+      default:
+      {
+        // do nothing, we choose process according to 
+        // order in the process table
+        if (p->state != RUNNABLE)
+          continue;
+      }
+      }
+
+
+      // default behavior for running a chosen process(p)
       uint initTick = ticks;
       do
       {

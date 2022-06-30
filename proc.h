@@ -34,7 +34,7 @@ struct context {
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
-enum scheduling { ROUND_ROBIN, PRIORITY, MLQ, LOTTERY };
+enum schedpolicy { DEFAULT = 0, ROUND_ROBIN, PRIORITY, MLQ, LOTTERY };
 
 // Per-process state
 struct proc {
