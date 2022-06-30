@@ -126,12 +126,15 @@
 // Final Problem
 #define LIMIT 10
 int base = 0;
+// struct spinlock lock;
 
 /** method 1 **/
 void add1(void *args)
 {
     int tid = -1;
+    // acquire(&lock);
     base++;
+    // release(&lock);
     printf(1, "[ID] %d => ", thread_id());
     if (base < LIMIT)
     {
@@ -148,8 +151,6 @@ void add1(void *args)
 
 int main1()
 {
-    printf(1, "BASE = %d, LIMIT = %d\n");
-
     int tid = thread_creator(add1, (void *)NULL);
     thread_join(tid);
 
@@ -159,13 +160,14 @@ int main1()
 /** method 2 **/
 void add2(void *args)
 {
+    // acquire(&lock);
     base++;
+    // release(&lock);
     exit();
 }
 
 int main2()
 {
-    printf(1, "BASE = %d, LIMIT = %d\n");
     for (;;)
     {
         int tid = thread_creator(add2, (void *)NULL);
@@ -188,6 +190,8 @@ int main2()
 /** **/
 int main()
 {
+    printf(1, "BASE = %d, LIMIT = %d\n", base, LIMIT);
+    // initlock(&lock, "base");
     main1();
     // main2();
 }
