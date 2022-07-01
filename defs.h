@@ -132,9 +132,7 @@ int             set_sched_policy(int);
 struct proc *   get_higher_priorities(struct proc*);
 // struct proc *   ptable_iterate(struct proc*);
 void            update_stats(void);
-int             get_turnaround_time(int);
-int             get_waiting_time(int);
-int             get_cpu_burst_time(int);
+int             wait_and_fill_statistics(int *, int *, int *, int *);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

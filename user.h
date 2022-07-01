@@ -32,9 +32,7 @@ int thread_join(int);
 int set_execution_priority(int);
 int get_sched_policy();
 int set_sched_policy(int);
-int get_turnaround_time(int);
-int get_waiting_time(int);
-int get_cpu_burst_time(int);
+int wait_and_fill_statistics(int *, int *, int *, int *);
 
 
 // ulib.c

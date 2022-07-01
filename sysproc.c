@@ -165,32 +165,13 @@ sys_set_sched_policy()
   return set_sched_policy(policy);
 }
 
-int
-sys_get_turnaround_time(void)
+int sys_wait_and_fill_statistics(void)
 {
- int pid;
-  if (argint(0, &pid) < 0)
+  int *turnAroundtime, *waitingtime, *cbttime, *pario;
+  if (argptr(0, (void*)&turnAroundtime, sizeof(turnAroundtime)) < 0 ||
+      argptr(1, (void*)&waitingtime, sizeof(waitingtime)) < 0 ||
+      argptr(2, (void*)&cbttime, sizeof(cbttime)) < 0 ||
+      argptr(3, (void*)&pario, sizeof(pario)) < 0)
     return -1;
-
-  return get_turnaround_time(pid);
-}
-
-int
-sys_get_waiting_time(void)
-{
- int pid;
-  if (argint(0, &pid) < 0)
-    return -1;
-
-  return get_waiting_time(pid);
-}
-
-int
-sys_get_cpu_burst_time(void)
-{
- int pid;
-  if (argint(0, &pid) < 0)
-    return -1;
-
-  return get_cpu_burst_time(pid);
+  return wait_and_fill_statistics(turnAroundtime, waitingtime, cbttime, pario);
 }

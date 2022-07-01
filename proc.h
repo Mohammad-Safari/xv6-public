@@ -57,6 +57,7 @@ struct proc {
   void *thread_stack;          // keeps stack thread
   int execution_priority;      // process execution priority
   int execution_ticks;         // process execution ticks
+  int tickets;         // process execution ticks
   // statistic
   int ready_ticks;             // process ready ticks
   int sleep_ticks;             // process sleep ticks

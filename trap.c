@@ -106,6 +106,7 @@ trap(struct trapframe *tf)
      tf->trapno == T_IRQ0+IRQ_TIMER)
   {
     int exec_ticks = inc_exec_ticks();
+    update_stats();
     switch (get_sched_policy())
     {
     case ROUND_ROBIN:

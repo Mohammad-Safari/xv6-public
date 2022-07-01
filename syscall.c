@@ -112,9 +112,7 @@ extern int sys_thread_join(void);
 extern int sys_set_execution_priority(void);
 extern int sys_get_sched_policy(void);
 extern int sys_set_sched_policy(void);
-extern int sys_get_turnaround_time(void);
-extern int sys_get_waiting_time(void);
-extern int sys_get_cpu_burst_time(void);
+extern int sys_wait_and_fill_statistics(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -146,10 +144,8 @@ static int (*syscalls[])(void) = {
 [SYS_thread_join]   sys_thread_join,
 [SYS_set_execution_priority]  sys_set_execution_priority,
 [SYS_get_sched_policy]        sys_get_sched_policy,
-[SYS_get_sched_policy]        sys_set_sched_policy,
-[SYS_get_turnaround_time]     sys_get_turnaround_time,
-[SYS_get_waiting_time]        sys_get_waiting_time,
-[SYS_get_cpu_burst_time]      sys_get_cpu_burst_time,
+[SYS_set_sched_policy]        sys_set_sched_policy,
+[SYS_wait_and_fill_statistics]sys_wait_and_fill_statistics,
 };
 
 void
