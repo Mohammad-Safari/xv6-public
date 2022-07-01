@@ -164,3 +164,33 @@ sys_set_sched_policy()
 
   return set_sched_policy(policy);
 }
+
+int
+sys_get_turnaround_time(void)
+{
+ int pid;
+  if (argint(0, &pid) < 0)
+    return -1;
+
+  return get_turnaround_time(pid);
+}
+
+int
+sys_get_waiting_time(void)
+{
+ int pid;
+  if (argint(0, &pid) < 0)
+    return -1;
+
+  return get_waiting_time(pid);
+}
+
+int
+sys_get_cpu_burst_time(void)
+{
+ int pid;
+  if (argint(0, &pid) < 0)
+    return -1;
+
+  return get_cpu_burst_time(pid);
+}

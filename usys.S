@@ -38,3 +38,6 @@ SYSCALL(thread_join);
 SYSCALL(set_execution_priority);  
 SYSCALL(set_sched_policy);  
 SYSCALL(get_sched_policy);  
+SYSCALL(get_turnaround_time);  
+SYSCALL(get_waiting_time);  
+SYSCALL(get_cpu_burst_time);  

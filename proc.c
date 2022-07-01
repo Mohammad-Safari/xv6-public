@@ -94,6 +94,8 @@ found:
   p->main_thread = 1;
   p->execution_priority = 3;
   p->execution_ticks = 0;
+  p->ready_ticks = 0;
+  p->sleep_ticks = 0;
 
   release(&ptable.lock);
 
@@ -802,4 +804,73 @@ set_execution_priority(int priority) {
   myproc()->execution_priority = priority;
   release(&ptable.lock);
   return priority;
+}
+
+void 
+updatestats()
+{
+  struct proc *p;
+  acquire(&ptable.lock);
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    switch (p->state)
+    {
+    case SLEEPING:
+      p->sleep_ticks++;
+      break;
+    case RUNNABLE:
+      p->ready_ticks++;
+      break;
+    default:;
+    }
+  }
+  release(&ptable.lock);
+}
+
+int
+get_turnaround_time(int pid)
+{
+  struct proc *p;
+  acquire(&ptable.lock);
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    if (p->pid == pid)
+    {
+      return p->sleep_ticks + p->ready_ticks + p->execution_ticks;
+    }
+  }
+  release(&ptable.lock);
+  return -1;
+}
+
+int
+get_waiting_time(int pid)
+{
+  struct proc *p;
+  acquire(&ptable.lock);
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    if (p->pid == pid)
+    {
+      return p->sleep_ticks + p->ready_ticks;
+    }
+  }
+  release(&ptable.lock);
+  return -1;
+}
+
+int
+get_cpu_burst_time(int pid)
+{
+  struct proc *p;
+  acquire(&ptable.lock);
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    if (p->pid == pid)
+    {
+      return p->execution_ticks;
+    }
+  }
+  release(&ptable.lock);
+  return -1;
 }

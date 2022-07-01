@@ -26,6 +26,9 @@
 #define SYS_thread_create  25
 #define SYS_thread_id      26
 #define SYS_thread_join    27
-#define SYS_set_execution_priority    28
+#define SYS_set_execution_priority     28
 #define SYS_get_sched_policy           29
 #define SYS_set_sched_policy           30
+#define SYS_get_turnaround_time        31
+#define SYS_get_waiting_time           32
+#define SYS_get_cpu_burst_time         33
