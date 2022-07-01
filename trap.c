@@ -104,12 +104,30 @@ trap(struct trapframe *tf)
   // If interrupts were on while locks held, would need to check nlock.
   if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER)
-    if ((get_shed_policy() == ROUND_ROBIN && inc_exec_ticks() % QUANTUM == 0) ||
-        (get_shed_policy() == PRIORITY && (inc_exec_ticks() % QUANTUM == 0 || // round robin on the same priorities
-                                           (get_higher_priorities(myproc()) != myproc())))) // pause for higher priorites
+  {
+    int exec_ticks = inc_exec_ticks();
+    switch (get_sched_policy())
     {
+    case ROUND_ROBIN:
+      if (exec_ticks % QUANTUM == 0)
+        yield();
+      break;
+    case PRIORITY:
+      if ((exec_ticks % QUANTUM == 0 ||                    // round robin on the same priorities
+           (get_higher_priorities(myproc()) != myproc()))) // pause for higher priorites)
+        yield();
+      break;
+    case MLQ:
+      if ((exec_ticks % (QUANTUM - get_execution_priority() + 1) == 0 || // round robin on the same priorities
+           (get_higher_priorities(myproc()) != myproc())))               // pause for higher priorites)
+        yield();
+      break;
+    case DEFAULT:
+    default:
       yield();
+      break;
     }
+  }
 
   // Check if the process has been killed since we yielded
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)

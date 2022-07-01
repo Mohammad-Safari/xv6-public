@@ -148,3 +148,19 @@ sys_set_execution_priority()
 
   return set_execution_priority(priority);
 }
+
+int
+sys_get_sched_policy()
+{
+  return get_sched_policy();
+}
+
+int
+sys_set_sched_policy()
+{
+  int policy;
+  if (argint(0, &policy) < 0)
+    return -1;
+
+  return set_sched_policy(policy);
+}

@@ -124,9 +124,11 @@ int             getHelloWorld(void);
 int             getProcInfo(void);
 int             thread_fork(void*);
 int             thread_join(int);
+int             get_execution_priority(void);
 int             set_execution_priority(int);
-int             inc_exec_ticks();
-int             get_shed_policy();
+int             inc_exec_ticks(void);
+int             get_sched_policy(void);
+int             set_sched_policy(int);
 struct proc *   get_higher_priorities(struct proc * p);
 // struct proc *   ptable_iterate(struct proc *p);
 

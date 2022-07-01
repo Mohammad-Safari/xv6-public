@@ -14,7 +14,7 @@ struct {
 
 static struct proc *initproc;
 
-enum schedpolicy scheduler_policy;
+enum schedpolicy scheduler_policy = PRIORITY;
 
 int nextpid = 1;
 extern void forkret(void);
@@ -361,11 +361,19 @@ inc_exec_ticks(){
 }
 
 int
-get_shed_policy(){
+get_sched_policy(){
   // acquire(&lock);
   int pol = scheduler_policy;
   // release(&lock);
   return pol;
+}
+
+int
+set_sched_policy(int policy){
+  // acquire(&lock);
+  scheduler_policy = policy;
+  // release(&lock);
+  return scheduler_policy;
 }
 
 int
@@ -419,7 +427,7 @@ scheduler(void)
     {
       switch (scheduler_policy)
       {
-      case DEFAULT:
+      case MLQ:
       case PRIORITY:
       {
 
@@ -436,9 +444,9 @@ scheduler(void)
         // robin, in for loop
         break;
       }
-      case MLQ:
       case LOTTERY:
       case ROUND_ROBIN:
+      case DEFAULT:
       default:
       {
         // do nothing, we choose process according to 
@@ -776,7 +784,16 @@ thread_join(int tid)
   }
 }
 
-int set_execution_priority(int priority) {
+int 
+get_execution_priority() {
+  acquire(&ptable.lock);
+  int priority = myproc()->execution_priority;
+  release(&ptable.lock);
+  return priority;
+}
+
+int 
+set_execution_priority(int priority) {
   acquire(&ptable.lock);
   if (priority < 1 || priority > 6)
   {

@@ -27,3 +27,5 @@
 #define SYS_thread_id      26
 #define SYS_thread_join    27
 #define SYS_set_execution_priority    28
+#define SYS_get_sched_policy           29
+#define SYS_set_sched_policy           30

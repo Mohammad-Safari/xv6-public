@@ -109,6 +109,9 @@ extern int sys_getProcInfo(void);
 extern int sys_thread_create(void);
 extern int sys_thread_id(void);
 extern int sys_thread_join(void);
+extern int sys_set_execution_priority(void);
+extern int sys_get_sched_policy(void);
+extern int sys_set_sched_policy(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -137,7 +140,10 @@ static int (*syscalls[])(void) = {
 [SYS_getProcInfo]   sys_getProcInfo,
 [SYS_thread_create] sys_thread_create,
 [SYS_thread_id]     sys_thread_id,
-[SYS_thread_join]   sys_thread_join
+[SYS_thread_join]   sys_thread_join,
+[SYS_set_execution_priority] sys_set_execution_priority,
+[SYS_get_sched_policy]        sys_get_sched_policy,
+[SYS_get_sched_policy]        sys_set_sched_policy,
 };
 
 void
