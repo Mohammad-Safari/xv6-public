@@ -125,6 +125,10 @@ int             getProcInfo(void);
 int             thread_fork(void*);
 int             thread_join(int);
 int             set_execution_priority(int);
+int             inc_exec_ticks();
+int             get_shed_policy();
+struct proc *   get_higher_priorities(struct proc * p);
+// struct proc *   ptable_iterate(struct proc *p);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

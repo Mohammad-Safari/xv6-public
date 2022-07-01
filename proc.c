@@ -93,6 +93,7 @@ found:
   p->initTick = ticks;
   p->main_thread = 1;
   p->execution_priority = 3;
+  p->execution_ticks = 0;
 
   release(&ptable.lock);
 
@@ -342,11 +343,55 @@ wait(void)
   }
 }
 
+// critical! ptable lock must have been acquired before calling this
 struct proc * 
 ptable_iterate(struct proc *p)
 {
   uint pn = (((uint)p + 1) % (uint)(&ptable.proc[NPROC]));
   return (struct proc *)(pn + (uint)ptable.proc);
+}
+
+int
+inc_exec_ticks(){
+  acquire(&ptable.lock);
+  struct proc *p = myproc();
+  int ticks = ++p->execution_ticks;
+  release(&ptable.lock);
+  return ticks;
+}
+
+int
+get_shed_policy(){
+  // acquire(&lock);
+  int pol = scheduler_policy;
+  // release(&lock);
+  return pol;
+}
+
+int
+get_preemptive_policy(){
+  // acquire(&lock);
+  int pol = scheduler_policy == PRIORITY;
+  // release(&lock);
+  return pol;
+}
+
+// critical! ptable lock must have been acquired before calling this
+struct proc *
+get_higher_priorities(struct proc * p){
+  struct proc *curr_priority = p;
+  for (struct proc *p1 = p + 1; p1 == p; p1 = ptable_iterate(p1))
+  {
+    if (p1->state != RUNNABLE)
+    {
+      continue;
+    }
+    else if (p1->execution_priority < curr_priority->execution_priority)
+    {
+      curr_priority = p1;
+    }
+  }
+  return curr_priority;
 }
 
 //PAGEBREAK: 42
@@ -384,24 +429,15 @@ scheduler(void)
         // get the process with most priority in table
         // actually start searching from p rather than ptable start
         // so that we can round robin on the same priorities
-        struct proc *curr_priority = p;
-        for (struct proc *p1 = p + 1; p1 == p; p1 = ptable_iterate(p1))
-        {
-          if (p1->state != RUNNABLE)
-          {
-            continue;
-          }
-          else if (p1->execution_priority < curr_priority->execution_priority)
-          {
-            curr_priority = p1;
-          }
-        }
-        p = curr_priority; // we have selected the process with most priority
+        p = get_higher_priorities(p); // we select the process with most priority
         // also by changing iterator to next process
-        // we guarantee that processes same priority
-        // be served round robin in for loop
+        // of chosen process in next loop we guarantee
+        // that processes same priority be served round
+        // robin, in for loop
         break;
       }
+      case MLQ:
+      case LOTTERY:
       case ROUND_ROBIN:
       default:
       {
@@ -412,25 +448,20 @@ scheduler(void)
       }
       }
 
-
       // default behavior for running a chosen process(p)
-      uint initTick = ticks;
-      do
-      {
-        // Switch to chosen process.  It is the process's job
-        // to release ptable.lock and then reacquire it
-        // before jumping back to us.
-        c->proc = p;
-        switchuvm(p);
-        p->state = RUNNING;
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
 
-        swtch(&(c->scheduler), p->context);
-        switchkvm();
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
 
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-      } while (((ticks - initTick) % QUANTUM) && (p->state == RUNNABLE));
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
     }
     release(&ptable.lock);
 

@@ -55,7 +55,8 @@ struct proc {
   int main_thread;             // If non-zero, this is the main thread
   int child_threads;           // child threads count
   void *thread_stack;          // keeps stack thread
-  int execution_priority;        // process execution priority
+  int execution_priority;      // process execution priority
+  int execution_ticks;         // process execution ticks
 };
 
 // Process memory is laid out contiguously, low addresses first:
