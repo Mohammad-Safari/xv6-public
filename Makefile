@@ -27,6 +27,7 @@ OBJS = \
 	uart.o\
 	vectors.o\
 	vm.o\
+	rand.o\
 
 # Cross-compiling (e.g., on Mac OS X)
 # TOOLPREFIX = i386-jos-elf
@@ -187,6 +188,7 @@ UPROGS=\
 	_thread_api\
 	_thread_test\
 	_priority_test\
+	_lottery_test\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -266,6 +268,7 @@ EXTRA=\
 	thread_api.c\
 	thread_test.c\
 	priority_test.c\
+	lottery_test.c\
 
 dist:
 	rm -rf dist

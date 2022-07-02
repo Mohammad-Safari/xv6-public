@@ -110,6 +110,7 @@ extern int sys_thread_create(void);
 extern int sys_thread_id(void);
 extern int sys_thread_join(void);
 extern int sys_set_execution_priority(void);
+extern int sys_set_tickets(void);
 extern int sys_get_sched_policy(void);
 extern int sys_set_sched_policy(void);
 extern int sys_wait_and_fill_statistics(void);
@@ -143,6 +144,7 @@ static int (*syscalls[])(void) = {
 [SYS_thread_id]     sys_thread_id,
 [SYS_thread_join]   sys_thread_join,
 [SYS_set_execution_priority]  sys_set_execution_priority,
+[SYS_set_tickets]             sys_set_tickets,
 [SYS_get_sched_policy]        sys_get_sched_policy,
 [SYS_set_sched_policy]        sys_set_sched_policy,
 [SYS_wait_and_fill_statistics]sys_wait_and_fill_statistics,

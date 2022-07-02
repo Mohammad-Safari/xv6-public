@@ -11,5 +11,6 @@
 #define LOGSIZE      (MAXOPBLOCKS*3)  // max data blocks in on-disk log
 #define NBUF         (MAXOPBLOCKS*3)  // size of disk block cache
 #define FSSIZE       1000  // size of file system in blocks
-#define QUANTUM      10 // number of round robin clock tick
+#define QUANTUM      20 // number of round robin clock tick
+#define MAX_TICKETS  60 // max number of tickets for one process
 

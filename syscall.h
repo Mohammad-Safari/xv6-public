@@ -27,6 +27,8 @@
 #define SYS_thread_id      26
 #define SYS_thread_join    27
 #define SYS_set_execution_priority     28
-#define SYS_get_sched_policy           29
-#define SYS_set_sched_policy           30
-#define SYS_wait_and_fill_statistics   34
+#define SYS_set_tickets                29
+#define SYS_get_sched_policy           30
+#define SYS_set_sched_policy           31
+#define SYS_wait_and_fill_statistics   32
+#define SYS_round_robin_test           33

@@ -116,12 +116,22 @@ trap(struct trapframe *tf)
     case PRIORITY:
       if ((exec_ticks % QUANTUM == 0 ||                    // round robin on the same priorities
            (get_higher_priorities(myproc()) != myproc()))) // pause for higher priorites)
+      {
         yield();
+      }
       break;
     case MLQ:
       if ((exec_ticks % (QUANTUM - get_execution_priority() + 1) == 0 || // round robin on the same priorities
            (get_higher_priorities(myproc()) != myproc())))               // pause for higher priorites)
+      {
         yield();
+      }
+      break;
+    case LOTTERY:
+      if (exec_ticks % QUANTUM == 0)
+      {
+        yield();
+      }
       break;
     case DEFAULT:
     default:

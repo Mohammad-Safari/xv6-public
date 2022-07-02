@@ -150,6 +150,16 @@ sys_set_execution_priority()
 }
 
 int
+sys_set_tickets()
+{
+  int tickets;
+  if (argint(0, &tickets) < 0)
+    return -1;
+
+  return set_tickets(tickets);
+}
+
+int
 sys_get_sched_policy()
 {
   return get_sched_policy();

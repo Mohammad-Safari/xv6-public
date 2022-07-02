@@ -126,6 +126,7 @@ int             thread_fork(void*);
 int             thread_join(int);
 int             get_execution_priority(void);
 int             set_execution_priority(int);
+int             set_tickets(int);
 int             inc_exec_ticks(void);
 int             get_sched_policy(void);
 int             set_sched_policy(int);

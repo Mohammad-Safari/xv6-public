@@ -36,6 +36,7 @@ SYSCALL(thread_create);
 SYSCALL(thread_id);    
 SYSCALL(thread_join);  
 SYSCALL(set_execution_priority);  
+SYSCALL(set_tickets);  
 SYSCALL(set_sched_policy);  
 SYSCALL(get_sched_policy);
 SYSCALL(wait_and_fill_statistics);  

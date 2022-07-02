@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "rand.h"
 
 struct {
   struct spinlock lock;
@@ -93,6 +94,7 @@ found:
   p->initTick = ticks;
   p->main_thread = 1;
   p->execution_priority = 3;
+  p->tickets = MAX_TICKETS / 3;
   p->execution_ticks = 0;
   p->ready_ticks = 0;
   p->sleep_ticks = 0;
@@ -396,6 +398,22 @@ get_higher_priorities(struct proc * p){
   return curr_priority;
 }
 
+// critical! ptable lock must have been acquired before calling this
+int
+lottery_Total(void){
+  struct proc *p;
+  int ticket_aggregate=0;
+
+//loop over process table and increment total tickets if a runnable process is found 
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    if(p->state==RUNNABLE){
+      ticket_aggregate+=p->tickets;
+    }
+  }
+  return ticket_aggregate;          // returning total number of tickets for runnable processes
+}
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -410,10 +428,14 @@ scheduler(void)
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
-  
+
   for(;;){
     // Enable interrupts on this processor.
     sti();
+
+    int total_tickets = lottery_Total();
+    const int golden_ticket = random_at_most(total_tickets);
+    int ticket_counted = 0;
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
@@ -439,6 +461,19 @@ scheduler(void)
         break;
       }
       case LOTTERY:
+      {
+        if (p->state != RUNNABLE)
+        {
+          // ticket counting
+          continue;
+        }
+        ticket_counted += p->tickets;
+        if (ticket_counted < golden_ticket)
+        {
+          continue;
+        }
+        break;
+      }
       case ROUND_ROBIN:
       case DEFAULT:
       default:
@@ -798,6 +833,18 @@ set_execution_priority(int priority) {
   return priority;
 }
 
+int 
+set_tickets(int tickets) {
+  acquire(&ptable.lock);
+  if (tickets < 10 || tickets > MAX_TICKETS)
+  {
+    tickets = 50;
+  }
+  myproc()->tickets = tickets;
+  release(&ptable.lock);
+  return tickets;
+}
+
 void 
 update_stats()
 {
@@ -819,11 +866,11 @@ update_stats()
   release(&ptable.lock);
 }
 
+// critical! ptable lock must have been acquired before calling this
 int
 get_turnaround_time(int pid)
 {
   struct proc *p;
-  acquire(&ptable.lock);
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   {
     if (p->pid == pid)
@@ -831,15 +878,14 @@ get_turnaround_time(int pid)
       return p->sleep_ticks + p->ready_ticks + p->execution_ticks;
     }
   }
-  release(&ptable.lock);
   return -1;
 }
 
+// critical! ptable lock must have been acquired before calling this
 int
 get_waiting_time(int pid)
 {
   struct proc *p;
-  acquire(&ptable.lock);
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   {
     if (p->pid == pid)
@@ -847,15 +893,14 @@ get_waiting_time(int pid)
       return p->sleep_ticks + p->ready_ticks;
     }
   }
-  release(&ptable.lock);
   return -1;
 }
 
+// critical! ptable lock must have been acquired before calling this
 int
 get_cpu_burst_time(int pid)
 {
   struct proc *p;
-  acquire(&ptable.lock);
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   {
     if (p->pid == pid)
@@ -863,7 +908,6 @@ get_cpu_burst_time(int pid)
       return p->execution_ticks;
     }
   }
-  release(&ptable.lock);
   return -1;
 }
 
@@ -893,7 +937,14 @@ wait_and_fill_statistics(int *turnAroundtime, int *waitingtime, int *cbttime, in
         *waitingtime = get_waiting_time(p->pid);
         *cbttime = get_cpu_burst_time(p->pid);
 
-        *pario = p->execution_priority;
+        if (scheduler_policy == LOTTERY)
+        {
+          *pario = p->tickets;
+        }
+        else
+        {
+          *pario = p->execution_priority;
+        }
 
         pid = p->pid;
         kfree(p->kstack);

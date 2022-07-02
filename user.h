@@ -30,6 +30,7 @@ int thread_create(void*);
 int thread_id(void);
 int thread_join(int);
 int set_execution_priority(int);
+int set_tickets(int);
 int get_sched_policy();
 int set_sched_policy(int);
 int wait_and_fill_statistics(int *, int *, int *, int *);
