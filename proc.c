@@ -799,7 +799,7 @@ set_execution_priority(int priority) {
 }
 
 void 
-updatestats()
+update_stats()
 {
   struct proc *p;
   acquire(&ptable.lock);
