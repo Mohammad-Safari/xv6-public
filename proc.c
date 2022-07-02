@@ -390,7 +390,7 @@ get_preemptive_policy(){
 struct proc *
 get_higher_priorities(struct proc * p){
   struct proc *curr_priority = p;
-  for (struct proc *p1 = p + 1; p1 == p; p1 = ptable_iterate(p1))
+    for (struct proc *p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++)
   {
     if (p1->state != RUNNABLE)
     {
