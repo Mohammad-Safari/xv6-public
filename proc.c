@@ -345,14 +345,6 @@ wait(void)
   }
 }
 
-// critical! ptable lock must have been acquired before calling this
-struct proc * 
-ptable_iterate(struct proc *p)
-{
-  uint pn = (((uint)p + 1) % (uint)(&ptable.proc[NPROC]));
-  return (struct proc *)(pn + (uint)ptable.proc);
-}
-
 int
 inc_exec_ticks(){
   acquire(&ptable.lock);
