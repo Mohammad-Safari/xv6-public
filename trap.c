@@ -52,6 +52,7 @@ trap(struct trapframe *tf)
       acquire(&tickslock);
       ticks++;
       wakeup(&ticks);
+      update_stats();
       release(&tickslock);
     }
     lapiceoi();
@@ -106,7 +107,6 @@ trap(struct trapframe *tf)
      tf->trapno == T_IRQ0+IRQ_TIMER)
   {
     int exec_ticks = inc_exec_ticks();
-    update_stats();
     switch (get_sched_policy())
     {
     case ROUND_ROBIN:
@@ -121,12 +121,16 @@ trap(struct trapframe *tf)
       }
       break;
     case MLQ:
-      if ((exec_ticks % (QUANTUM - get_execution_priority() + 1) == 0 || // round robin on the same priorities
-           (get_higher_priorities(myproc()) != myproc())))               // pause for higher priorites)
+    {
+      int new_quantum = (int)(QUANTUM - get_execution_priority() + 1);
+      new_quantum = new_quantum > 0 ? new_quantum : 1;
+      if ((exec_ticks % new_quantum == 0 ||                // round robin on the same priorities
+           (get_higher_priorities(myproc()) != myproc()))) // pause for higher priorites)
       {
         yield();
       }
       break;
+    }
     case LOTTERY:
       if (exec_ticks % QUANTUM == 0)
       {
