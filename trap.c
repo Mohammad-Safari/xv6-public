@@ -109,6 +109,7 @@ trap(struct trapframe *tf)
     int exec_ticks = inc_exec_ticks();
     switch (get_sched_policy())
     {
+    case LOTTERY:
     case ROUND_ROBIN:
       if (exec_ticks % QUANTUM == 0)
         yield();
@@ -131,12 +132,6 @@ trap(struct trapframe *tf)
       }
       break;
     }
-    case LOTTERY:
-      if (exec_ticks % QUANTUM == 0)
-      {
-        yield();
-      }
-      break;
     case DEFAULT:
     default:
       yield();

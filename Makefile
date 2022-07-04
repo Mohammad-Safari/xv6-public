@@ -188,7 +188,10 @@ UPROGS=\
 	_thread_api\
 	_thread_test\
 	_priority_test\
+	_RR_test\
+	_MLQ_test\
 	_lottery_test\
+	
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -268,6 +271,8 @@ EXTRA=\
 	thread_api.c\
 	thread_test.c\
 	priority_test.c\
+	RR_test.c\
+	MLQ_test.c\
 	lottery_test.c\
 
 dist:
